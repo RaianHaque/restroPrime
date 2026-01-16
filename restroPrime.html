@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RestoPrime - Authentic Bangladeshi Cuisine</title>
+    <link rel="stylesheet" href="restroPrime.css"> 
+</head>
+<body>
+
+    <div id="auth-overlay" class="auth-overlay" style="display:none;">
+        <div class="auth-box">
+            <span class="close-auth" onclick="closeAuth()">×</span>
+            <h1 class="auth-logo">RestoPrime</h1>
+            
+            <div id="login-form">
+                <h2>Welcome Back</h2>
+                <p class="auth-subtext">Login to confirm reservations.</p>
+                
+                <input type="text" id="login-identifier" placeholder="Email, Phone, or Username">
+                
+                <div class="password-wrapper">
+                    <input type="password" id="login-pass" placeholder="Password">
+                    <span class="eye-icon" onclick="togglePassword('login-pass', this)">👁️</span>
+                </div>
+
+                <div class="admin-check-wrapper">
+                    <input type="checkbox" id="admin-checkbox"> 
+                    <label for="admin-checkbox">Login as Admin</label>
+                </div>
+
+                <button onclick="handleLogin()" class="cta-button full-width">Sign In</button>
+                <p class="switch-link">New Member? <span onclick="toggleAuth('signup')">Create Account</span></p>
+            </div>
+
+            <div id="signup-form" style="display:none;">
+                <h2>Create Account</h2>
+                
+                <div class="input-row">
+                    <input type="text" id="signup-fname" placeholder="First Name">
+                    <input type="text" id="signup-lname" placeholder="Last Name">
+                </div>
+
+                <input type="email" id="signup-email" placeholder="Email Address">
+                <input type="tel" id="signup-phone" placeholder="Phone Number">
+
+                <div class="password-wrapper">
+                    <input type="password" id="signup-pass" placeholder="Password">
+                    <span class="eye-icon" onclick="togglePassword('signup-pass', this)">👁️</span>
+                </div>
+
+                <div class="password-wrapper">
+                    <input type="password" id="signup-confirm" placeholder="Confirm Password">
+                    <span class="eye-icon" onclick="togglePassword('signup-confirm', this)">👁️</span>
+                </div>
+
+                <button onclick="handleSignup()" class="cta-button full-width">Register</button>
+                <p class="switch-link">Already a member? <span onclick="toggleAuth('login')">Login</span></p>
+            </div>
+        </div>
+    </div>
+
+    <header class="main-nav">
+        <a href="#" class="logo" onclick="switchView('home')">RestoPrime</a>
+        <div class="menu-toggle" id="mobile-menu-btn">&#9776;</div>
+
+        <nav class="nav-links" id="nav-menu">
+            <ul>
+                <li><a href="#" onclick="switchView('home')">Home</a></li>
+                <li><a href="#menu-section" onclick="switchView('home')">Menu</a></li>
+                <li><a href="#cart-section" onclick="switchView('home')">Cart (<span id="cart-count">0</span>)</a></li>
+                
+                <li id="nav-admin-link" style="display:none;">
+                    <a href="#" onclick="switchView('admin')" style="color: var(--primary-color); font-weight:bold;">Admin Dashboard</a>
+                </li>
+                
+                <li><button id="nav-auth-btn" onclick="triggerAuth()" class="auth-btn">Login</button></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div id="public-view">
+        
+        <main class="hero-section">
+            <h1>Taste the Tradition.</h1>
+            <p>Premium Bangladeshi Dining & Instant Table Reservation.</p>
+            <a href="#menu-section" class="cta-button large">Order Food</a>
+        </main>
+
+        <section id="booking" class="section-container">
+            <h2>Visual Table Layout</h2>
+            <p>Select your preferred spot. (Login required to confirm)</p>
+            <div id="table-map" class="table-grid"></div>
+        </section>
+
+        <section id="menu-section" class="section-container">
+            <h2>Our Smart Menu</h2>
+            <p id="current-time-msg" class="highlight-text"></p>
+            
+            <div id="dynamic-menu-wrapper">
+                <div id="breakfast-container" class="menu-category-box">
+                    <h3>Breakfast Special</h3>
+                    <div class="menu-grid"></div>
+                </div>
+                <div id="lunch-container" class="menu-category-box">
+                    <h3>Lunch Favorites</h3>
+                    <div class="menu-grid"></div>
+                </div>
+                <div id="dinner-container" class="menu-category-box">
+                    <h3>Dinner Delights</h3>
+                    <div class="menu-grid"></div>
+                </div>
+                <div id="drinks-container" class="menu-category-box">
+                    <h3>Drinks & Appetizers</h3>
+                    <div class="menu-grid"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="cart-section" class="section-container cart-section">
+            <h2>Your Cart</h2>
+            <div id="cart-items-container">
+                <p>Your cart is empty.</p>
+            </div>
+            <div class="cart-total-box">
+                <h3>Total: <span id="cart-total-display">৳0</span></h3>
+                <button onclick="handleAction('checkout')" class="cta-button large">Checkout Selected Items</button>
+            </div>
+        </section>
+
+        <footer id="about" class="site-footer">
+            <div class="footer-content">
+                <h3>RestoPrime</h3>
+                <p>Authentic flavors, modern convenience.</p>
+                <p>&copy; 2026 RestoPrime Bangladesh. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <div id="admin-view" style="display:none;" class="admin-page-container">
+        <div class="section-container">
+            <h2 style="margin-top: 40px;">Admin Dashboard</h2>
+            <p>Manage Restaurant Reservations</p>
+            <div class="admin-controls-wrapper">
+                <h3>Occupied Tables (Click to Release)</h3>
+                <div id="admin-table-controls" class="admin-grid">
+                    </div>
+            </div>
+            <button onclick="switchView('home')" class="cta-button" style="margin-top:30px;">Back to Home Site</button>
+        </div>
+    </div>
+
+    <div id="desc-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">×</span>
+            <div class="modal-flex">
+                <img id="modal-img" src="" alt="Food Image">
+                <div class="modal-details">
+                    <h2 id="modal-title">Food Name</h2>
+                    <p id="modal-price" class="price-tag">৳0</p>
+                    <p id="modal-desc" class="modal-description"></p>
+                    
+                    <div class="quantity-control">
+                        <label>Quantity:</label>
+                        <input type="number" id="modal-qty" value="1" min="1" max="10">
+                    </div>
+                    
+                    <button id="modal-add-btn" class="cta-button full-width">Add to Cart</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="restroPrime.js"></script> 
+</body>
+</html>
