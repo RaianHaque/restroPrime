@@ -1,0 +1,18 @@
+{
+  "users": [
+    {
+      "fname": "Raian",
+      "lname": "Haque",
+      "email": "abcxyz@gmail.com",
+      "phone": "Raian",
+      "pass": "raian24"
+    }
+  ],
+  "admins": [
+    {
+      "username": "Raian",
+      "pass": "raian24"
+    }
+  ],
+  "bookings": []
+}

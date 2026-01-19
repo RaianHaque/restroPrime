@@ -101,8 +101,14 @@ function toggleAuth(type) {
     if(type === 'signup') {
         document.getElementById('login-form').style.display = 'none';
         document.getElementById('signup-form').style.display = 'block';
+        document.getElementById('admin-signup-form').style.display = 'none';
+    } else if(type === 'admin-signup') {
+        document.getElementById('login-form').style.display = 'none';
+        document.getElementById('signup-form').style.display = 'none';
+        document.getElementById('admin-signup-form').style.display = 'block';
     } else {
         document.getElementById('signup-form').style.display = 'none';
+        document.getElementById('admin-signup-form').style.display = 'none';
         document.getElementById('login-form').style.display = 'block';
     }
 }
@@ -140,25 +146,21 @@ function handleLogin() {
     const pass = document.getElementById('login-pass').value;
     const isAdmin = document.getElementById('admin-checkbox').checked;
 
-    // 1. ADMIN CHECK (Strict)
-    if(isAdmin) {
-        if(identifier === 'Raian' && pass === 'raian24') {
-            loginSuccess({ name: 'Admin', role: 'admin' });
+    // Fetch from backend
+    fetch('http://localhost:3000/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ identifier, pass, isAdmin })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.success) {
+            loginSuccess(data.user);
         } else {
-            alert('Incorrect Admin Username or Password!');
+            alert(data.error || 'Invalid Credentials');
         }
-        return;
-    }
-
-    // 2. USER CHECK (Email OR Phone)
-    let users = JSON.parse(localStorage.getItem('rp_users')) || [];
-    const found = users.find(u => (u.email === identifier || u.phone === identifier) && u.pass === pass);
-
-    if(found) {
-        loginSuccess({ ...found, role: 'user' });
-    } else {
-        alert('Invalid Email/Phone or Password');
-    }
+    })
+    .catch(err => alert('Server error: ' + err.message));
 }
 
 function handleSignup() {
@@ -179,19 +181,55 @@ function handleSignup() {
         return;
     }
 
-    let users = JSON.parse(localStorage.getItem('rp_users')) || [];
+    // Send signup request to backend
+    fetch('http://localhost:3000/api/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fname, lname, email, phone, pass })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.error) {
+            alert(data.error);
+        } else {
+            alert('Registration Successful! Please Login.');
+            toggleAuth('login');
+        }
+    })
+    .catch(err => alert('Server error: ' + err.message));
+}
+
+function handleAdminSignup() {
+    const username = document.getElementById('admin-signup-username').value;
+    const pass = document.getElementById('admin-signup-pass').value;
+    const confirm = document.getElementById('admin-signup-confirm').value;
+    const masterCode = document.getElementById('admin-master-code').value;
     
-    // Check duplication
-    if(users.some(u => u.email === email || u.phone === phone)) {
-        alert("Email or Phone already registered!");
+    if(!username || !pass || !masterCode) {
+        alert("Please fill all fields.");
         return;
     }
 
-    users.push({ fname, lname, email, phone, pass });
-    localStorage.setItem('rp_users', JSON.stringify(users));
-    
-    alert('Registration Successful! Please Login.');
-    toggleAuth('login');
+    if(pass !== confirm) {
+        alert("Passwords do not match!");
+        return;
+    }
+
+    fetch('http://localhost:3000/api/admin-signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, pass, masterCode })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.error) {
+            alert(data.error);
+        } else {
+            alert('Admin Registration Successful! Please Login as Admin.');
+            toggleAuth('login');
+        }
+    })
+    .catch(err => alert('Server error: ' + err.message));
 }
 
 function loginSuccess(userObj) {

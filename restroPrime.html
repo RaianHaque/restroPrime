@@ -55,7 +55,29 @@
                 </div>
 
                 <button onclick="handleSignup()" class="cta-button full-width">Register</button>
-                <p class="switch-link">Already a member? <span onclick="toggleAuth('login')">Login</span></p>
+                <p class="switch-link">Already a member? <span onclick="toggleAuth('login')">Login</span> | <span onclick="toggleAuth('admin-signup')">Signup as Admin</span></p>
+            </div>
+
+            <div id="admin-signup-form" style="display:none;">
+                <h2>Admin Registration</h2>
+                <p class="auth-subtext">Enter master code to become admin</p>
+                
+                <input type="text" id="admin-signup-username" placeholder="Admin Username">
+
+                <div class="password-wrapper">
+                    <input type="password" id="admin-signup-pass" placeholder="Password">
+                    <span class="eye-icon" onclick="togglePassword('admin-signup-pass', this)">👁️</span>
+                </div>
+
+                <div class="password-wrapper">
+                    <input type="password" id="admin-signup-confirm" placeholder="Confirm Password">
+                    <span class="eye-icon" onclick="togglePassword('admin-signup-confirm', this)">👁️</span>
+                </div>
+
+                <input type="text" id="admin-master-code" placeholder="Master Code">
+
+                <button onclick="handleAdminSignup()" class="cta-button full-width">Register as Admin</button>
+                <p class="switch-link">Back to <span onclick="toggleAuth('signup')">User Signup</span> or <span onclick="toggleAuth('login')">Login</span></p>
             </div>
         </div>
     </div>
